@@ -63,8 +63,8 @@ void loop() {
 
 int compare(int x, int y){
   /* Fungsi compare untuk membandingkan dua nilai integer dan mengembalikan nilai terbesar
-   * INPUT  : integer x, integer y
-   * OUTPUT : integer terbesar
+   * INPUT  : int x, int y
+   * OUTPUT : int
    */
   if (x>y){
     return x;
@@ -77,7 +77,6 @@ int compare(int x, int y){
 void motor_spin(int m_dir_pin, int dir, int m_step_pin, int step_val, int t){
   /* Fungsi motor_spin adalah fungsi untuk memutar stepper motor dengan arah, besar derajat, dan rpm ditentukan oleh user
    * INPUT  : Pin direction motor, arah putar, pin step motor, banyaknya step yang diinginkan, dan waktu antar step (dalam microsecond)
-   * OUTPUT : Motor dengan direction pin dan step pin yang dimasukkan akan berputar ke arah dir dengan banyaknya step sebanyak step_val dan interval antar step selama t
    */
   digitalWrite(m_dir_pin, dir);
   for(int i=0; i<step_in; i++){
@@ -91,7 +90,6 @@ void motor_spin(int m_dir_pin, int dir, int m_step_pin, int step_val, int t){
 void base_spin(){
   /* Fungsi base_spin adalah fungsi untuk memutar piringan cup.
    * INPUT  : interval antar step
-   * OUTPUT : Pirigan cup akan berputar dengan rpm yang ditentukan
    */
   if(temp==0 || temp == 1){
     motor_spin(m1_dir, HIGH, m1_step, 33, int_motor1); // error bertambah 0,6 derajat
@@ -106,7 +104,6 @@ void base_spin(){
 void phase1(int t){
   /* Fungsi base_phase1 adalah fungsi untuk memutar piringan setelah itu menuang bubuk 1
    * INPUT  : interval motor bubuk 1 untuk membuka dan menutup (dalam milisecond)
-   * OUTPUT : cup akan terisi bubuk 1.
    */
    
   motor_spin(m2_dir, HIGH, m2_step, mb_step, int_bubuk);  // Membuka dispenser bubuk 1
@@ -117,7 +114,6 @@ void phase1(int t){
 void phase12(int t_b1, int t_b2){ 
   /* Fungsi ini berfungsi untuk memutar piringan cup dan membuka dispenser bubuk 1 dan 2.
    * INPUT  : int t_b1 dan int t_b2
-   * OUTPUT : Piringan cup akan berputar dan dispenser bubuk 1 dan 2 akan terbuka selama t_b1 dan t_b2 milisecond berturut-turut
    */
    
   int counter = 0; // sebagai counter clock
@@ -151,7 +147,6 @@ void phase12(int t_b1, int t_b2){
 void phase123(int t_b1, int t_b2, int t_b3){
   /* Fungsi ini berfungsi untuk memutar piringan cup dan membuka dispenser bubuk 1, 2, dan 3.
    * INPUT  : int t_b1 , int t_b2, dan int t_b3
-   * OUTPUT : Piringan cup akan berputar dan dispenser bubuk 1, 2, dan 3 akan terbuka selama t_b1, t_b2, dan t_b3 milisekon berturut-turut
    */
    
   int counter = 0; // sebagai counter clock
@@ -191,7 +186,6 @@ void phase123(int t_b1, int t_b2, int t_b3){
 void phase1234(int t_b1, int t_b2, int t_b3, int t_a){
   /* Fungsi ini berfungsi untuk memutar piringan cup dan membuka dispenser bubuk 1, 2, dan 3.
    * INPUT  : int t_b1 , int t_b2, int t_b3, int t_a
-   * OUTPUT : Piringan cup akan berputar dan dispenser bubuk 1, 2, dan 3 akan terbuka selama t_b1, t_b2, dan t_b3 milisekon berturut-turut serta solenoid valve akan aktif selama t_a milisekon
    */
   int counter = 0; // sebagai batas waktu untuk selesai berputar
   int max_time = compare(compare(t_b1,t_b2), compare(t_b3,t_4));  // batas waktu maksimum
@@ -234,7 +228,6 @@ void phase1234(int t_b1, int t_b2, int t_b3, int t_a){
 void phase12345(int t_b1, int t_b2, int t_b3, int t_a){
   /* Fungsi ini berfungsi untuk memutar piringan cup dan membuka dispenser bubuk 1, 2, dan 3.
    * INPUT  : int t_b1 , int t_b2, dan int t_b3
-   * OUTPUT : Piringan cup akan berputar dan dispenser bubuk 1 dan 2 akan terbuka selama t_b1 dan t_b2 milisecond berturut-turut
    */
    
   int counter = 0; // sebagai batas waktu untuk selesai berputar
@@ -280,10 +273,10 @@ void phase12345(int t_b1, int t_b2, int t_b3, int t_a){
   motor_spin(m5_dir, LOW, m5_step, mx_step, int_mixer);
 }
 
-void inisialisasi(int t_b1, int t_b2, int t_b3, int t_a){
+int inisialisasi(int t_b1, int t_b2, int t_b3, int t_a){
   /* Fungsi ini untuk menjalankan inisialisasi mesin ketika piringan cup masih kosong sampai terisi penuh
-   * INPUT  :
-   * OUTPUT :
+   * INPUT  : int t_b1, int t_b2, int t_b3, int t_a
+   * OUTPUT : int
    */
 
    int cup = 1;
