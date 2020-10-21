@@ -1,6 +1,6 @@
 /* Example sketch to control a stepper motor with TB6600 stepper motor driver, AccelStepper library and Arduino: acceleration and deceleration. More info: https://www.makerguides.com */
-// Include the AccelStepper library:
 
+// Library Stepper
 #include <AccelStepper.h>
 #include <SoftwareSerial.h>
 #include <Servo.h>
@@ -71,6 +71,7 @@ void setup() {
 // MUTER SAMPE SWITCH KETEKEN
 void moveBaseSwitch()
 {
+  Serial.println("BASE");
  buttonState = digitalRead(buttonPin);
 while(!buttonState)
 {
@@ -215,6 +216,7 @@ delay(2000);
 
 void addCoffee(int t,int deg)
 {
+  Serial.println("KOPI");
   for(int i=0;i<t;i++)
   {
        moveStepperXTest(deg);
@@ -223,6 +225,7 @@ void addCoffee(int t,int deg)
 
 void addSugar(int t,int deg)
 {
+  Serial.println("GULA");
     for(int i=0;i<t;i++)
   {
        moveStepperYTest(deg);
@@ -231,6 +234,7 @@ void addSugar(int t,int deg)
 
 void addCreamer(int t,int deg)
 {
+  Serial.println("KRIM");
     for(int i=0;i<t;i++)
   {
        moveStepperZTest(deg);
@@ -238,16 +242,19 @@ void addCreamer(int t,int deg)
 }
 void addWater(int del)
 {
+  Serial.println("AIR");
      digitalWrite(relay1,!r1);
    r1=!r1;
-   delay(10000);
+   delay(del);
    Serial.println("Relay pompa toggle OFF");
    digitalWrite(relay1,!r1);
    r1=!r1;
+   delay(1500);
 }
 
 void moveMixer(int del)
 {
+  Serial.println("MIXER");
        for (pos = 65; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
     myservo.write(pos);              // tell servo to go to position in variable 'pos'
     delay(10);                       // waits 15ms for the servo to reach the position
@@ -265,11 +272,12 @@ void moveMixer(int del)
 }
 void combinationMove(bool x,bool y, bool z,bool a,bool b)
 {
-  if(x) moveBaseSwitch();
-  if(y) addCoffee(6,7);
-  if(z) addSugar(2,2);
+  moveBaseSwitch();
+  if(x) addCoffee(5,7);
+  if(y) addSugar(2,3);
+  if(z) addCreamer(2,4);
   if(a) addWater(10000);
-  if(b) moveMixer(5000);
+  if(b) moveMixer(7000);
 }
 // FUNGSI UTAMA , BACA INPUT BLUETOOTH LALU NENTUIN GERAKAN MESIN SELANJUTNYA 
 void readBluetooth()
@@ -285,7 +293,7 @@ if(x!=""){
    Serial.println("Relay pompa toggle ON");
    digitalWrite(relay1,!r1);
    r1=!r1;
-   delay(10000);
+   delay(12500);
    Serial.println("Relay pompa toggle OFF");
    digitalWrite(relay1,!r1);
    r1=!r1;
@@ -294,7 +302,7 @@ if(x!=""){
    Serial.println("Relay mixer toggle ON");
    digitalWrite(relay2,!r2);
    r2=!r2;
-   delay(2500);
+   delay(5000);
    Serial.println("Relay mixer toggle OFF");
    digitalWrite(relay2,!r2);
    r2=!r2;
@@ -473,6 +481,48 @@ if(x!=""){
    // STEP 9 -> 00001
    combinationMove(0,0,0,0,1);
    // STEP 10-> 00000
+   Serial.println("DONE");
+   break;
+  case 100:
+   Serial.println("Relay mixer toggle ON");
+   digitalWrite(relay2,!r2);
+   r2=!r2;
+   break;
+     case 101: // INISIALISASI
+   Serial.println("Autopilot Mode 6 glass !");s
+   // STEP 1 -> 10000
+   combinationMove(1,0,0,0,0);
+   // STEP 2 -> 11000
+   combinationMove(1,1,0,0,0);
+   // STEP 3 -> 11100
+   combinationMove(1,1,1,0,0);
+   // STEP 4 -> 11110
+   combinationMove(1,1,1,1,0);
+   // STEP 5 -> 11111 gelas 1 diujung
+   combinationMove(1,1,1,1,1);
+   // STEP 6 -> 01111 gelas 1 bottom , gelas 2 awal 
+   combinationMove(0,0,0,0,0);
+   Serial.println("DONE");
+   break;
+        case 102: // TAHAP 2
+   Serial.println("Autopilot Mode 6 glass !");
+   combinationMove(1,1,1,1,1);
+   Serial.println("DONE");
+   break;
+        case 103: // SINGLE
+   Serial.println("Autopilot Mode 6 glass !");
+   // STEP 1 -> 10000
+   combinationMove(1,0,0,0,0);
+   // STEP 2 -> 11000
+   combinationMove(0,1,0,0,0);
+   // STEP 3 -> 11100
+   combinationMove(0,0,1,0,0);
+   // STEP 4 -> 11110
+   combinationMove(0,0,0,1,0);
+   // STEP 5 -> 11111 gelas 1 diujung
+   combinationMove(0,0,0,0,1);
+   // STEP 6 -> 01111 gelas 1 bottom , gelas 2 awal 
+   combinationMove(0,0,0,0,0);
    Serial.println("DONE");
    break;
   default:
