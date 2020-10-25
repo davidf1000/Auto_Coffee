@@ -42,6 +42,9 @@ int stepRepZ=3;
 int stepDegZ =3;
 int delayPompa=10000;
 int delayMixer=5000;
+int degreeServo= 55;
+int initServo= 18;
+
 // OBJECT
 Servo myservo;  // create servo object to control a servo
 SoftwareSerial EEBlue(11, A2); // RX | TX untuk bluetooth 
@@ -193,7 +196,7 @@ void adjustZ(int dir)
 // INISIALISASI POSISI SERVO AWAL 
 void startServo()
 {
-    for (pos = 0; pos <= 65; pos += 1) { // goes from 0 degrees to 180 degrees
+    for (pos = initServo; pos <= degreeServo; pos += 1) { // goes from 0 degrees to 180 degrees
     // in steps of 1 degree
     myservo.write(pos);              // tell servo to go to position in variable 'pos'
     delay(80);                       // waits 15ms for the servo to reach the position
@@ -203,12 +206,12 @@ void startServo()
 void moveServo()
 {
 
-    for (pos = 65; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+    for (pos = degreeServo; pos >= initServo; pos -= 1) { // goes from 180 degrees to 0 degrees
     myservo.write(pos);              // tell servo to go to position in variable 'pos'
     delay(20);                       // waits 15ms for the servo to reach the position
   }
   delay(1500);
-  for (pos = 0; pos <= 65; pos += 1) { // goes from 0 degrees to 180 degrees
+  for (pos = initServo; pos <= degreeServo; pos += 1) { // goes from 0 degrees to 180 degrees
     // in steps of 1 degree
     myservo.write(pos);              // tell servo to go to position in variable 'pos'
     delay(20);                       // waits 15ms for the servo to reach the position
@@ -272,7 +275,7 @@ void addWater(int del)
 void moveMixer(int del)
 {
   Serial.println("MIXER");
-       for (pos = 65; pos >= 0; pos -= 1) { // goes from 65 degrees to 0 degrees
+       for (pos = degreeServo; pos >= initServo; pos -= 1) { // goes from 65 degrees to 0 degrees
     myservo.write(pos);              // tell servo to go to position in variable 'pos'
     delay(10);                       // waits 15ms for the servo to reach the position
   }
@@ -281,7 +284,7 @@ void moveMixer(int del)
    delay(del);
    digitalWrite(relay2,!r2);
    r2=!r2;
-  for (pos = 0; pos <= 65; pos += 1) { // goes from 0 degrees to 65 degrees
+  for (pos = initServo; pos <= degreeServo; pos += 1) { // goes from 0 degrees to 65 degrees
     // in steps of 1 degree
     myservo.write(pos);              // tell servo to go to position in variable 'pos'
     delay(10);                       // waits 15ms for the servo to reach the position
