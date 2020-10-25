@@ -33,6 +33,15 @@ bool r2=1;    // Kondisi relay mixer
 bool r3=1;    // relay backup 
 const int buttonPin = 10;     // pin switch piringan 
 int buttonState = 0;         // kondisi switch piringan 
+// Variabel untuk menyimpan data tune stepper bubuk
+int stepRepX=5;
+int stepDegX=7;
+int stepRepY=3;
+int stepDegY=3;
+int stepRepZ=3;
+int stepDegZ =3;
+int delayPompa=10000;
+int delayMixer=5000;
 // OBJECT
 Servo myservo;  // create servo object to control a servo
 SoftwareSerial EEBlue(11, A2); // RX | TX untuk bluetooth 
@@ -283,23 +292,25 @@ void moveMixer(int del)
 void combinationMove(bool x,bool y, bool z,bool a,bool b)
 {
   moveBaseSwitch();
-  if(x) addCoffee(5,7);
-  if(y) addSugar(2,3);
-  if(z) addCreamer(2,4);
-  if(a) addWater(10000);
-  if(b) moveMixer(7000);
+  if(x) addCoffee(stepRepX,stepDegX);
+  if(y) addSugar(stepRepY,stepDegY);
+  if(z) addCreamer(stepRepZ,stepDegZ);
+  if(a) addWater(delayPompa);
+  if(b) moveMixer(delayMixer);
 }
 // FUNGSI UTAMA , membaca input integer dari user, lalu menentukan tindakan apa yang akan dilakukan selanjutnya 
 void readBluetooth()
 {
  String x;
+ int stringX;
 if (EEBlue.available())
 {
  x=EEBlue.readString(); 
 }
 if(x!=""){
+  stringX =  x.toInt();
   // Switch case 
-  switch (x.toInt()){
+  switch (stringX){
     // Case 1 - 10 => Case untuk mengetes setiap aktuator secara manual 
     // misalkan nyalakan relay, gerakan stepper, gerakan servo, dll 
   case 1:
@@ -464,23 +475,23 @@ if(x!=""){
    break;
   case 92:
    Serial.println("Add Coffee !");
-   addCoffee(6,7);
+   addCoffee(stepRepX,stepDegX);
    break;
    case 93:
    Serial.println("Add Sugar !");
-   addSugar(2,2);
+   addSugar(stepRepY,stepDegY);
    break;
   case 94:
    Serial.println("Add Creamer !");
-   addCreamer(2,3);
+   addCreamer(stepRepZ,stepDegZ);
    break;
   case 95:
    Serial.println("Add Hot Water !");
-   addWater(10000);
+   addWater(delayPompa);
    break;
   case 96:
    Serial.println("Mixer!");
-   moveMixer(5000);
+   moveMixer(delayMixer);
    break;
   case 99:
    Serial.println("Autopilot Mode 6 glass !");
@@ -518,7 +529,7 @@ if(x!=""){
    // ketika 6 gelas kosong, jalankan fungsi ini untuk menggerakan mesin sampai gelas pertama penuh. 
    // Setelah gelas pertama penuh, ambil gelas pertama lalu taro gelas kosong. Lalu jalankan case 101 
      case 101: // INISIALISASI
-   Serial.println("Autopilot Mode 6 glass !");s
+   Serial.println("Autopilot Mode 6 glass !");
    // STEP 1 -> 10000
    combinationMove(1,0,0,0,0);
    // STEP 2 -> 11000
@@ -565,44 +576,60 @@ if(x!=""){
   default:
    break;
   }
+  if (stringX>200 && stringX <300)
+  {
+  // tune deg X naik
+  if (stringX>200 && stringX<210)
+  {
+    stepDegX= stringX%10;
+  }
+    // tune deg Y naik
+  if (stringX>210 && stringX<220)
+  {
+    stepDegY= stringX%10;
+  }
+
+    // tune deg Z naik
+  if (stringX>220 && stringX<230)
+  {
+    stepDegZ= stringX%10;
+  }
+
+    // tune repetisi X
+  if (stringX>230 && stringX<240)
+  {
+    stepRepX= stringX%10;
+  }
+
+    // tune repetisi Y
+  if (stringX>240 && stringX<250)
+  {
+    stepRepY= stringX%10;
+
+  }
+    // tune repetisi Z
+  if (stringX>250 && stringX<260)
+  {
+    stepRepZ= stringX%10;
+  }
+    // tune delay pompa 
+  if (stringX>260 && stringX<270)
+  {
+    delayPompa= (stringX%10)*1000;
+  }
+    // tune delay mixer
+  if (stringX>270 && stringX<280)
+  {
+    delayMixer= (stringX%10)*1000;
+  }
+  }
+
+
+  // Program utk tuning sudut dan banyak naik-turun stepper 
   };
 }
 
 // LOOP UTAMA, hanya akan terus-menerus membaca input bluetooth user lalu menentukan eksekusi program selanjutnya
 void loop() {
 readBluetooth();
-}
-
-
-// DEPRECATED (Gak terpakai lagi )
-// MOVE STEPPER BASE 60 DERAJAT
-void moveBase60() {
-  
-    if(p%3==0)
-  {
-    loc=loc+33;
-  }
-  else
-  {
-    loc=loc+33;
-  }
-  p++;
-  stepperBase.moveTo(loc);
-  Serial.println(loc);
-  stepperBase.runToPosition();
-}
-
-// DEPRECATED (gak terpakai)
-// TESTING PAKE FUNGSI RUNSPEED() TAPI TERNYATA GAK BISA 
-void stepperBase60()
-{
-   buttonState = digitalRead(buttonPin);
-while(!buttonState)
-{
-  Serial.println("DO SOMETHING");
-   buttonState = digitalRead(buttonPin);
-   stepperBase.runSpeed();
-}
-Serial.println("STOP");
-delay(2000); 
 }
